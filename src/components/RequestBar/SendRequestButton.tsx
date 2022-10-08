@@ -1,30 +1,14 @@
+import useRequest from "../../hooks/useRequest"
 import useRequestStore from "../../store/requestStore"
 
 const SendRequestButton: React.FC = () => {
 
-    const { method, baseURL, endpoint, setRequestResult, setRequestsList } = useRequestStore()
-  
-    const handleSendRequest = () => {
-      console.log(method + baseURL + endpoint)
-      fetch(baseURL + endpoint, {
-        method
-      })
-      .then(res => res.json())
-      .then(data => {
-        setRequestResult(data),
-        setRequestsList({
-          method,
-          baseURL,
-          endpoint,
-          time: Date.now()
-        })
-      })
-      .catch(err => console.log(err))
-    }
+    const { method, baseURL, endpoint } = useRequestStore()
+    const { send } = useRequest()
   
     return (
       <button
-        onClick={ handleSendRequest }
+        onClick={ () => send({ method, baseURL, endpoint }) }
       >
         Send
       </button>

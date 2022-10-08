@@ -2,7 +2,7 @@ import create from 'zustand'
 import { persist } from 'zustand/middleware'
 import { MethodValue } from '../constants/Methods'
 
-interface RequestInstance {
+export interface RequestInstance {
     baseURL: string
     endpoint: string
     method: MethodValue
