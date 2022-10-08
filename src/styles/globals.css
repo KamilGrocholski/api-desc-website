@@ -2,7 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+
+    .GET {
+        @apply bg-methods-GET
+    }
+    
+    .POST {
+        @apply bg-methods-POST
+    }
+    
+    .PUT {
+        @apply bg-methods-PUT
+    }
+    
+    .DELETE {
+        @apply bg-methods-DELETE
+    }
+}
+
 body {
     background-color: black;
-    color: white;
+    color: red;
 }

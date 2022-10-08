@@ -18,6 +18,45 @@ model Example {
     id String @id @default(cuid())
 }
 
+model Endpoint {
+    id String @id @default(cuid())
+
+    path      String
+    params    Param[]
+    method    Method  @relation(fields: [methodId], references: [id])
+    methodId  String
+    version   Version @relation(fields: [versionId], references: [id])
+    versionId String
+}
+
+model Param {
+    id String @id @default(cuid())
+
+    name     String
+    type     String
+    optional Boolean
+
+    endpoint   Endpoint @relation(fields: [endpointId], references: [id])
+    endpointId String
+}
+
+model Method {
+    id String @id @default(cuid())
+
+    name      String     @unique
+    endpoints Endpoint[]
+}
+
+model Version {
+    id String @id @default(cuid())
+
+    name      String
+    endpoints Endpoint[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
 // Necessary for Next auth
 model Account {
     id                String  @id @default(cuid())
