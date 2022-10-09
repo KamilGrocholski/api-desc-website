@@ -4,6 +4,10 @@
 
 @layer components {
 
+    .text-muted {
+        @apply text-white/50
+    }
+
     .GET {
         @apply bg-methods-GET
     }
@@ -22,6 +26,5 @@
 }
 
 body {
-    background-color: black;
-    color: red;
+    @apply bg-dark-3
 }

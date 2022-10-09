@@ -2,6 +2,8 @@ import { useRouter } from "next/router"
 import { MethodValue } from "../constants/Methods"
 import useRequestStore from "../store/requestStore"
 import { stringsCombine } from "../utils/stringsCombine"
+import { toast } from 'react-toastify'
+import { TOAST_CONTAINERS_IDS } from "../constants/ToastContainers"
 
 export interface Request {
     method: MethodValue
@@ -12,7 +14,7 @@ export interface Request {
 type Url = Pick<Request, 'baseURL' | 'endpoint'>
 
 const useRequest = () => {
-    const { setMethod, setBaseURL, setEndpoint, method, baseURL, endpoint, setRequestResult, setRequestsList } = useRequestStore()
+    const { setMethod, setBaseURL, setEndpoint, method, baseURL, endpoint, setRequestResult, addRequest, removeRequest } = useRequestStore()
     const { pathname, push, basePath } = useRouter()
 
     const set = (request: Request) => {
@@ -29,21 +31,38 @@ const useRequest = () => {
         fetch(combinedUrl({baseURL, endpoint}), {
             method
         })
-        .then(res => res.json())
+        .then(res => {
+            toast.dismiss()
+            return res.json()
+        })
         .then(data => {
             setRequestResult(data)
-            setRequestsList({ 
+            addRequest({ 
                 method, 
                 baseURL, 
                 endpoint, 
                 time: Date.now()
+            })
+            toast('The request has been sent!', {
+                theme: 'dark',
+                type: 'success',
+                className: 'w-12 h-10',
+                containerId: TOAST_CONTAINERS_IDS['REQUEST_NOTIFICATIONS']
             })
         })
         .catch(err => console.error(err))
     }
 
     const copy = (urlParts: Url) => {
-        navigator.clipboard.writeText(combinedUrl({...urlParts}))
+        try {
+            navigator.clipboard.writeText(combinedUrl({...urlParts}))
+            toast('Copied!', {
+                type: 'success',
+                containerId: TOAST_CONTAINERS_IDS['HISTORY_REQUEST_ACTION_NOTIFICATIONS']
+            })
+        } catch (err) {
+            console.log(err)
+        }
     }
 
     const combinedUrl = (urlParts: Url) => {
@@ -52,11 +71,20 @@ const useRequest = () => {
         return url
     }
 
+    const remove = (time: number) => {
+        try {
+            removeRequest(time)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
     return {
         set,
         send,
         copy,
-        combinedUrl
+        combinedUrl,
+        remove
     }
 }
 

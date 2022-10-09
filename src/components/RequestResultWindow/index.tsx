@@ -11,7 +11,7 @@ const RequestResultWindow: React.FC = () => {
     }, [requestResult])
 
     return (
-      <div className='w-[50vw] overflow-x-scroll'>
+      <div className='w-[50vw] h-[90vh] overflow-scroll'>
         <pre>{ JSON.stringify(result, null, 2) }</pre>
       </div>
     )

@@ -9,11 +9,23 @@ export interface RequestInstance {
     time: number
 }
 
+interface Endpoint {
+    endpoint: string
+    createdAt: number
+}
+
+interface BaseUrl {
+    baseURL: string
+    endpoints: Endpoint[]
+    createdAt: number
+}
+
 interface RequestStoreStates {
     baseURL: string
     endpoint: string
     method: MethodValue
     requestResult: unknown
+    baseURLsList: BaseUrl[]
     requestsList: RequestInstance[]
 }
 
@@ -22,7 +34,10 @@ interface RequestStoreActions {
     setBaseURL: (baseURL: RequestStoreStates['baseURL']) => void
     setEndpoint: (endpoint: RequestStoreStates['endpoint']) => void
     setRequestResult: (requestResult: RequestStoreStates['requestResult']) => void  
-    setRequestsList: (newRequest: RequestInstance) => void
+    addBaseURLToList: (baseURL: BaseUrl['baseURL']) => void
+    addRequest: (newRequest: RequestInstance) => void
+    addEndpoint: (endpoint: string, baseURLTime: number) => void
+    removeRequest: (time: RequestInstance['time']) => void
 }
 
 const useRequestStore = create(
@@ -40,10 +55,38 @@ const useRequestStore = create(
             requestResult: null,
             setRequestResult: (requestResult) => set(() => ({ requestResult })),
 
+            baseURLsList: [],
+            addBaseURLToList: (baseURL) => {
+                const list = get().baseURLsList
+                const createdAt = Date.now()
+                set(() => ({ baseURLsList: [...list, { baseURL, createdAt, endpoints: [] }] }))
+            },
+
+            addEndpoint: (endpoint, baseURLTime) => {
+                const list = get().baseURLsList
+                const createdAt = Date.now()
+                const newList = list.map(url => {
+                    if (url.createdAt === baseURLTime) {
+
+                        return {
+                            ...url,
+                            endpoints: [...url.endpoints, { endpoint, createdAt }]
+                        }
+                    }
+
+                    return url
+                })
+                set(() => ({ baseURLsList: newList }))
+            },
+
             requestsList: [],
-            setRequestsList: (newRequest) => {
+            addRequest: (newRequest) => {
                 const list = get().requestsList
-                set(() => ({ requestsList: [...list, newRequest] }))
+                set(() => ({ requestsList: [newRequest, ...list] }))
+            },
+            removeRequest: (time) => {
+                const list = get().requestsList
+                set(() => ({ requestsList: list.filter(request => request.time !== time) }))
             }
         }),
         { 

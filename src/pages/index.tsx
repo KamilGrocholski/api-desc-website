@@ -14,10 +14,13 @@ const Home: NextPage = () => {
         <meta name="description" content="xd" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      
-      <RequestsHistoryWindow />
-      <div className='flex flex-col'>
-        <RequestBar />
+
+
+      <div className='flex flex-col items.center mx-auto'>
+        <RequestsHistoryWindow />
+        <div className='sticky top-0 flex justify-center'>
+          <RequestBar />
+        </div>
         <RequestResultWindow /> 
       </div>
       
