@@ -1,54 +1,75 @@
 import * as Icons from "../../assets/icons"
-import useRequest from "../../hooks/useRequest"
 import { secondsToLocalString } from "../../utils/secondsToLocalString"
 import Link from "next/link"
-import ActionButton from "./ActionButton"
 import { httpsReplace } from "../../utils/stringReplace"
-import type { MadeRequest } from "../../store/requestsTreesStore"
+import { MadeRequest, useRequestsTreesStore } from "../../store/requestsTreesStore"
+import { stringsCombine } from "../../utils/stringsCombine"
+import { useLayoutStore } from "../../store/layoutStore"
 
 const Request: React.FC<{ request: MadeRequest }> = ({ request }) => {
 
-    const { set, send, copy, combinedUrl, remove } = useRequest()
+    const { removeRequest, sendRequest, setCurrentSetup } = useRequestsTreesStore()
+    const { isHistoryOpen } = useLayoutStore()
+
+    const copyLink = (link: string) => {
+      try {
+        navigator.clipboard.writeText(link)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    const resendRequest = (request: MadeRequest) => {
+      setCurrentSetup(request)
+      sendRequest()
+    }
 
     return (
         <div   
-            className='flex flex-row space-x-2 items-center bg-dark-2 rounded-md px-2 drop-shadow-xl' 
+            className='grid grid-cols-5 gap-5 items-center bg-dark-2 rounded-md px-2 drop-shadow-xl' 
           >
 
-              <div className={ `${request.method} rounded-md w-fit h-fit px-2 py-1 font-semibold text-sm text-black` }>
+              <div className={ `${request.method} rounded-md h-fit method w-16 text-center ${ isHistoryOpen ? 'translate-x-0' : 'translate-x-[528%]' } col-span-1 transition-all ease-in-out duration-1000` }>
                 { request.method }
               </div>
 
-              <div className='flex flex-col'>
+              <div className={ `flex flex-col w-full col-span-4 ${ isHistoryOpen ? 'translate-x-0' : 'translate-x-[400%]' }`}>
 
                 <div className='flex flex-row space-x-1 items-center text-sm font-semibold'>
-                  <Link href={ combinedUrl({...request}) }>
+                  <Link href={ stringsCombine([request.baseUrl, request.endpoint]) }>
                     <a 
                       target='_blank' 
                       onClick={ e => e.stopPropagation() }
+                      className='break-all'
                     >
-                      { httpsReplace(combinedUrl({...request})) }
+                      { httpsReplace(stringsCombine([request.baseUrl, request.endpoint])) }
                     </a>
                   </Link>
                 </div>
 
-                <div className='flex flex-row justify-between'>
+                <div className='flex flex-row justify-between w-full'>
                   <div className='text-white/40 text-sm'>
                     { secondsToLocalString(request.time) }
                   </div>
                   <div className='flex flex-row space-x-3'>
-                    <ActionButton action={ () => remove(request.time) } className='text-red-500'>
+                    <button
+                      onClick={ () => resendRequest(request) }
+                      className='text-purple-500'
+                    >
+                      <Icons.Send />
+                    </button>
+                    <button
+                      onClick={ () => copyLink(request.baseUrl + request.endpoint) }
+                      className='text-sky-500'
+                    >
+                      <Icons.Link />
+                    </button>
+                    <button
+                      onClick={ () => removeRequest(request.time) }
+                      className='text-red-500'
+                    >
                       <Icons.Remove />
-                    </ActionButton>
-                    <ActionButton action={ () => set({...request}) } className='text-sky-500'>
-                      <Icons.Copy />  
-                    </ActionButton>
-                    <ActionButton action={ () => copy({...request}) } className='text-orange-500'>
-                      <Icons.Link /> 
-                    </ActionButton>
-                    <ActionButton action={ () => send({...request}) } className='text-purple-500'>
-                      <Icons.Send />  
-                    </ActionButton>
+                    </button>
                   </div>
                 </div>
                 

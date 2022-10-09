@@ -13,7 +13,7 @@ const RequestBar: React.FC = () => {
                 <EndpointBar />
                 <SendRequestButton />
             </div>
-            <RequestNotifications />
+            {/* <RequestNotifications /> */}
         </>
     )
 }

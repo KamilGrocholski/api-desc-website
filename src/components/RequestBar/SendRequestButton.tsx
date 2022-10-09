@@ -6,7 +6,8 @@ const SendRequestButton: React.FC = () => {
   
     return (
       <button
-        onClick={ () => sendRequest() }
+        className='rounded-r-md text-black text-sm   font-semibold h-full bg-sky-500 px-6 py-1'
+        onClick={ sendRequest }
       >
         Send
       </button>

@@ -4,6 +4,7 @@ import React from "react";
 import RequestBar from "../components/RequestBar";
 import RequestResultWindow from "../components/RequestResultWindow";
 import RequestsHistoryWindow from "../components/RequestsHistoryWindow";
+import RequestsTrees from "../components/RequestsTrees";
 
 const Home: NextPage = () => {
 
@@ -16,14 +17,27 @@ const Home: NextPage = () => {
       </Head>
 
 
-      <div className='flex flex-col items.center mx-auto'>
-        <RequestsHistoryWindow />
+      <div className='flex flex-col mx-auto'>
+
         <div className='sticky top-0 flex justify-center'>
-          <RequestBar />
+            <RequestBar />
         </div>
-        <RequestResultWindow /> 
-      </div>
+
+          <div className='fixed left-0'>
+            <RequestsHistoryWindow />
+          </div>
+
+          <div className=''>
+            <RequestResultWindow /> 
+          </div>
+
+          <div className='fixed right-0'>
+            <RequestsTrees />
+          </div>
+
       
+      </div>
+
     </>
   );
 };

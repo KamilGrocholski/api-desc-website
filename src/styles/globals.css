@@ -8,6 +8,10 @@
         @apply text-white/50
     }
 
+    .method {
+        @apply rounded-md px-2 py-1 text-black font-bold text-xs
+    }
+
     .GET {
         @apply bg-methods-GET
     }
@@ -26,5 +30,15 @@
 }
 
 body {
-    @apply bg-dark-3
+    @apply bg-dark-3 text-white
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
 }

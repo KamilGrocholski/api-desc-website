@@ -1,7 +1,7 @@
 const Wrapper: React.FC<{ children: JSX.Element | JSX.Element[] }> = ({ children }) => {
   return (
-    <div className=''>
-        <main className='min-h-screen container mx-auto flex flex-col items-center'>
+    <div className='w-full'>
+        <main className='min-h-screen mx-auto container flex flex-col w-full'>
             { children }
         </main>
     </div>

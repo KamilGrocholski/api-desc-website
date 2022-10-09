@@ -15,13 +15,13 @@ const MethodBar: React.FC = () => {
         <select
           value={ currentSetup.method }
           onChange={ handleMethodChange }
-          className={ `${ currentSetup.method } px-2 py-1` }
+          className={ `${ currentSetup.method } rounded-l-md px-2 py-1 text-black font-bold text-xs h-full` }
         >
           {Object.values(METHODS).map((method, i) => (
             <option
               key={ method + i }
               value={ method }
-              className={ `${ method }` }
+              className={ `${ method } method` }
             >
               { method }
             </option>

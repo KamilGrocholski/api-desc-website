@@ -17,6 +17,6 @@
     "noUncheckedIndexedAccess": true,
     "downlevelIteration": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.cjs", "**/*.mjs", "src/pages/your-requests.tss", "src/components/RequestBar/RequestNotifications.tss"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.cjs", "**/*.mjs", "src/pages/your-requests.tss", "src/components/RequestBar/RequestNotifications.tss", "src/components/RequestsTrees/Method.tss"],
   "exclude": ["node_modules"]
 }

@@ -1,32 +1,29 @@
-import { useState } from "react"
-import useRequestStore from "../../store/requestStore"
+import { useRequestsTreesStore } from "../../store/requestsTreesStore"
 
 const BaseUrlBar: React.FC = () => {
 
-    const [isEditing, setIsEditing] = useState<boolean>(false)
-
-    const { baseUrl, setBaseUrl } = useRequestStore()
+    const { currentSetup, setCurrentSetup, getAllBaseUrls } = useRequestsTreesStore()
   
     const handleBaseUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       e.preventDefault()
-      setBaseUrl(e.target.value)
+      setCurrentSetup({ baseUrl: e.target.value })
     }
   
-
     return (
       <div className='flex flex-row'>
         <input 
           type='text'
-          value={ baseUrl }
+          value={ currentSetup.baseUrl }
           onChange={ handleBaseUrlChange }
+          onFocus={ e => e.target.select() }
           className='bg-gray-700 text-black px-2 py-1'
+          list='baseUrls'
         />
-        <button onClick={ () => setIsEditing(true) }>
-
-        </button>
-        <button onClick={ () => setIsEditing(false) }>
-
-        </button>
+        <datalist id='baseUrls'>
+          {getAllBaseUrls().map((url, i) => (
+            <option key={ i } value={ url } />
+          ))}
+        </datalist>
       </div>
     )
 }

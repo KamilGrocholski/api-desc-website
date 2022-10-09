@@ -2,24 +2,25 @@ import create from 'zustand'
 import { persist } from 'zustand/middleware'
 import { MethodValue } from '../constants/Methods'
 
-type BaseUrl = string
+export type BaseUrl = string
 
-type Endpoint = string 
+export type Endpoint = string 
 
-type Method = MethodValue
+export type Method = MethodValue
 
-interface RequestTree {
+export interface RequestTree {
     baseUrl: BaseUrl
     methods: Required<Record<Method, Endpoint[]>>
 }
 
 export interface MadeRequest {
     baseUrl: BaseUrl
-        method: Method
-        endpoint: Endpoint 
-        time: number
+    method: Method
+    endpoint: Endpoint 
+    time: number
 }
 interface State {
+
     // Current setup
     currentSetup: {
         baseUrl: BaseUrl
@@ -42,11 +43,13 @@ interface Actions {
     setCurrentSetup: (setup: Partial<State['currentSetup']>) => void
 
     // Made requests
+    removeRequest: (time: MadeRequest['time']) => void
     sendRequest: () => void
 
     // Requests trees
     addRequestTree: (baseUrl: BaseUrl) => void
     removeRequestTree: (baseUrl: BaseUrl) => void
+    getAllRequestsTrees: () => RequestTree[]
 
     updateBaseUrl: (oldBaseUrl: BaseUrl, newBaseUrl: BaseUrl) => void
     getAllBaseUrls: () => BaseUrl[]
@@ -62,6 +65,7 @@ interface Actions {
 export const useRequestsTreesStore = create(
     persist<State & Actions>(
         (set, get) => ({
+
             // Current setup
             currentSetup: {
                 baseUrl: 'https://pokeapi.co/api/v2/',
@@ -71,7 +75,11 @@ export const useRequestsTreesStore = create(
 
             setCurrentSetup: (setup) => {
                 const currentSetup = get().currentSetup
-                set(() => ({ currentSetup: { ...currentSetup, setup } }))
+                set(() => ({ currentSetup: {
+                    baseUrl: setup.baseUrl ?? currentSetup.baseUrl,
+                    method: setup.method ?? currentSetup.method,
+                    endpoint: setup.endpoint ?? currentSetup.endpoint
+                } }))
             },
 
             // Request result
@@ -79,6 +87,11 @@ export const useRequestsTreesStore = create(
 
             // Made requests
             madeRequests: [],
+
+            removeRequest: (time) => {
+                const madeRequests = get().madeRequests
+                set(() => ({ madeRequests: madeRequests.filter(request => request.time !== time) }))
+            },
 
             sendRequest: () => {
                 const currentSetup = get().currentSetup
@@ -88,7 +101,7 @@ export const useRequestsTreesStore = create(
                     time: Date.now()
                 }
                 set(() => ({
-                    madeRequests: [...madeRequests, newRequest]
+                    madeRequests: [newRequest, ...madeRequests]
                 }))
 
                 fetch(currentSetup.baseUrl+currentSetup.endpoint, {
@@ -102,7 +115,17 @@ export const useRequestsTreesStore = create(
             },
 
             // Requests trees
-            requestsTrees: [],
+            requestsTrees: [
+                {
+                    baseUrl: 'https://pokeapi.co/api/v2/',
+                    methods: {
+                        GET: ['pokemon/ditto', 'pokemon-species/aegislash', 'type/3'],
+                        POST: ['pokemon/ditto'],
+                        PUT: ['pokemon/ditto'],
+                        DELETE: ['pokemon/ditto']
+                    } 
+                }
+            ],
 
             addRequestTree: (baseUrl) => {
                 const requestsTrees = get().requestsTrees
@@ -130,6 +153,12 @@ export const useRequestsTreesStore = create(
                 const tree = requestsTrees.find(tree => tree.baseUrl === baseUrl)
 
                 return tree
+            },
+
+            getAllRequestsTrees: () => {
+                const requestsTrees = get().requestsTrees
+                
+                return requestsTrees
             },
 
             updateBaseUrl: (oldBaseUrl, newBaseUrl) => {
