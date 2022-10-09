@@ -1,21 +1,21 @@
 import { MethodValue, METHODS } from "../../constants/Methods"
-import useRequestStore from "../../store/requestStore"
+import { useRequestsTreesStore } from "../../store/requestsTreesStore"
 
 const MethodBar: React.FC = () => {
 
-    const { method, setMethod } = useRequestStore()
+    const { setCurrentSetup, currentSetup } = useRequestsTreesStore()
   
     const handleMethodChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
       e.preventDefault()
-      setMethod(e.target.value as MethodValue)
+      setCurrentSetup({ method: e.target.value as MethodValue })
     }
   
     return (
       <div>
         <select
-          value={ method }
+          value={ currentSetup.method }
           onChange={ handleMethodChange }
-          className={ `${ method } px-2 py-1` }
+          className={ `${ currentSetup.method } px-2 py-1` }
         >
           {Object.values(METHODS).map((method, i) => (
             <option

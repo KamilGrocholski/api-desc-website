@@ -7,19 +7,19 @@ import { TOAST_CONTAINERS_IDS } from "../constants/ToastContainers"
 
 export interface Request {
     method: MethodValue
-    baseURL: string
+    baseUrl: string
     endpoint: string
 }
 
-type Url = Pick<Request, 'baseURL' | 'endpoint'>
+type Url = Pick<Request, 'baseUrl' | 'endpoint'>
 
 const useRequest = () => {
-    const { setMethod, setBaseURL, setEndpoint, method, baseURL, endpoint, setRequestResult, addRequest, removeRequest } = useRequestStore()
+    const { setMethod, setBaseUrl, setEndpoint, method, baseUrl, endpoint, setRequestResult, addRequest, removeRequest } = useRequestStore()
     const { pathname, push, basePath } = useRouter()
 
     const set = (request: Request) => {
         setMethod(request.method)
-        setBaseURL(request.baseURL)
+        setBaseUrl(request.baseUrl)
         setEndpoint(request.endpoint)
     }
 
@@ -28,7 +28,7 @@ const useRequest = () => {
 
         if (pathname !== basePath) push('/')
 
-        fetch(combinedUrl({baseURL, endpoint}), {
+        fetch(combinedUrl({baseUrl, endpoint}), {
             method
         })
         .then(res => {
@@ -39,7 +39,7 @@ const useRequest = () => {
             setRequestResult(data)
             addRequest({ 
                 method, 
-                baseURL, 
+                baseUrl, 
                 endpoint, 
                 time: Date.now()
             })
@@ -53,9 +53,9 @@ const useRequest = () => {
         .catch(err => console.error(err))
     }
 
-    const copy = (urlParts: Url) => {
+    const copy = (UrlParts: Url) => {
         try {
-            navigator.clipboard.writeText(combinedUrl({...urlParts}))
+            navigator.clipboard.writeText(combinedUrl({...UrlParts}))
             toast('Copied!', {
                 type: 'success',
                 containerId: TOAST_CONTAINERS_IDS['HISTORY_REQUEST_ACTION_NOTIFICATIONS']
@@ -65,10 +65,10 @@ const useRequest = () => {
         }
     }
 
-    const combinedUrl = (urlParts: Url) => {
-        const url = stringsCombine([urlParts.baseURL, urlParts.endpoint])
+    const combinedUrl = (UrlParts: Url) => {
+        const Url = stringsCombine([UrlParts.baseUrl, UrlParts.endpoint])
 
-        return url
+        return Url
     }
 
     const remove = (time: number) => {

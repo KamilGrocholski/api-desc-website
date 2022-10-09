@@ -5,8 +5,6 @@ import { useRequestsTreesStore } from "../store/requestsTreesStore";
 const YourRequests: NextPage = () => {
     const { addRequestTree, addEndpoint } = useRequestsTreesStore()
 
-
-
     return (
         <>
             <Head>

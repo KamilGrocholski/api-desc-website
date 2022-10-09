@@ -1,12 +1,12 @@
 import * as Icons from "../../assets/icons"
-import { RequestInstance } from "../../store/requestStore"
 import useRequest from "../../hooks/useRequest"
 import { secondsToLocalString } from "../../utils/secondsToLocalString"
 import Link from "next/link"
 import ActionButton from "./ActionButton"
 import { httpsReplace } from "../../utils/stringReplace"
+import type { MadeRequest } from "../../store/requestsTreesStore"
 
-const Request: React.FC<{ request: RequestInstance }> = ({ request }) => {
+const Request: React.FC<{ request: MadeRequest }> = ({ request }) => {
 
     const { set, send, copy, combinedUrl, remove } = useRequest()
 

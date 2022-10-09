@@ -13,6 +13,12 @@ interface RequestTree {
     methods: Required<Record<Method, Endpoint[]>>
 }
 
+export interface MadeRequest {
+    baseUrl: BaseUrl
+        method: Method
+        endpoint: Endpoint 
+        time: number
+}
 interface State {
     // Current setup
     currentSetup: {
@@ -21,12 +27,11 @@ interface State {
         endpoint: Endpoint
     } 
 
+    // Request result
+    requestResult: unknown
+
     // Made requests
-    madeRequests: {
-        baseUrl: BaseUrl
-        method: Method
-        endpoint: Endpoint 
-    }[]
+    madeRequests: MadeRequest[]
 
     // Requests trees
     requestsTrees: RequestTree[]
@@ -34,10 +39,10 @@ interface State {
 
 interface Actions {
     // Current setup
-    setCurrentSetup: (setup: { baseUrl: BaseUrl, method: Method, endpoint?: Endpoint }) => void
+    setCurrentSetup: (setup: Partial<State['currentSetup']>) => void
 
     // Made requests
-
+    sendRequest: () => void
 
     // Requests trees
     addRequestTree: (baseUrl: BaseUrl) => void
@@ -69,8 +74,32 @@ export const useRequestsTreesStore = create(
                 set(() => ({ currentSetup: { ...currentSetup, setup } }))
             },
 
+            // Request result
+            requestResult: undefined,
+
             // Made requests
             madeRequests: [],
+
+            sendRequest: () => {
+                const currentSetup = get().currentSetup
+                const madeRequests = get().madeRequests
+                const newRequest = {
+                    ...currentSetup,
+                    time: Date.now()
+                }
+                set(() => ({
+                    madeRequests: [...madeRequests, newRequest]
+                }))
+
+                fetch(currentSetup.baseUrl+currentSetup.endpoint, {
+                    method: currentSetup.method
+                })
+                .then(res => res.json())
+                .then(data => {
+                    set(() => ({ requestResult: data }))
+                })
+                .catch(err => console.log(err))
+            },
 
             // Requests trees
             requestsTrees: [],

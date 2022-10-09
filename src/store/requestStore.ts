@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware'
 import { MethodValue } from '../constants/Methods'
 
 export interface RequestInstance {
-    baseURL: string
+    baseUrl: string
     endpoint: string
     method: MethodValue
     time: number
@@ -15,28 +15,28 @@ interface Endpoint {
 }
 
 interface BaseUrl {
-    baseURL: string
+    baseUrl: string
     endpoints: Endpoint[]
     createdAt: number
 }
 
 interface RequestStoreStates {
-    baseURL: string
+    baseUrl: string
     endpoint: string
     method: MethodValue
     requestResult: unknown
-    baseURLsList: BaseUrl[]
+    baseUrlsList: BaseUrl[]
     requestsList: RequestInstance[]
 }
 
 interface RequestStoreActions {
     setMethod: (method: RequestStoreStates['method']) => void 
-    setBaseURL: (baseURL: RequestStoreStates['baseURL']) => void
+    setBaseUrl: (baseUrl: RequestStoreStates['baseUrl']) => void
     setEndpoint: (endpoint: RequestStoreStates['endpoint']) => void
     setRequestResult: (requestResult: RequestStoreStates['requestResult']) => void  
-    addBaseURLToList: (baseURL: BaseUrl['baseURL']) => void
+    addBaseUrlToList: (baseUrl: BaseUrl['baseUrl']) => void
     addRequest: (newRequest: RequestInstance) => void
-    addEndpoint: (endpoint: string, baseURLTime: number) => void
+    addEndpoint: (endpoint: string, baseUrlTime: number) => void
     removeRequest: (time: RequestInstance['time']) => void
 }
 
@@ -46,8 +46,8 @@ const useRequestStore = create(
             method: 'GET',
             setMethod: (method) => set(() => ({ method })),
 
-            baseURL: 'https://pokeapi.co/api/v2/',
-            setBaseURL: (baseURL) => set(() => ({ baseURL })),
+            baseUrl: 'https://pokeapi.co/api/v2/',
+            setBaseUrl: (baseUrl) => set(() => ({ baseUrl })),
 
             endpoint: 'pokemon/ditto',
             setEndpoint: (endpoint) => set(() => ({ endpoint })),
@@ -55,28 +55,28 @@ const useRequestStore = create(
             requestResult: null,
             setRequestResult: (requestResult) => set(() => ({ requestResult })),
 
-            baseURLsList: [],
-            addBaseURLToList: (baseURL) => {
-                const list = get().baseURLsList
+            baseUrlsList: [],
+            addBaseUrlToList: (baseUrl) => {
+                const list = get().baseUrlsList
                 const createdAt = Date.now()
-                set(() => ({ baseURLsList: [...list, { baseURL, createdAt, endpoints: [] }] }))
+                set(() => ({ baseUrlsList: [...list, { baseUrl, createdAt, endpoints: [] }] }))
             },
 
-            addEndpoint: (endpoint, baseURLTime) => {
-                const list = get().baseURLsList
+            addEndpoint: (endpoint, baseUrlTime) => {
+                const list = get().baseUrlsList
                 const createdAt = Date.now()
-                const newList = list.map(url => {
-                    if (url.createdAt === baseURLTime) {
+                const newList = list.map(Url => {
+                    if (Url.createdAt === baseUrlTime) {
 
                         return {
-                            ...url,
-                            endpoints: [...url.endpoints, { endpoint, createdAt }]
+                            ...Url,
+                            endpoints: [...Url.endpoints, { endpoint, createdAt }]
                         }
                     }
 
-                    return url
+                    return Url
                 })
-                set(() => ({ baseURLsList: newList }))
+                set(() => ({ baseUrlsList: newList }))
             },
 
             requestsList: [],

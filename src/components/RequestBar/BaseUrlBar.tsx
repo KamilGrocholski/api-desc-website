@@ -5,11 +5,11 @@ const BaseUrlBar: React.FC = () => {
 
     const [isEditing, setIsEditing] = useState<boolean>(false)
 
-    const { baseURL, setBaseURL } = useRequestStore()
+    const { baseUrl, setBaseUrl } = useRequestStore()
   
     const handleBaseUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       e.preventDefault()
-      setBaseURL(e.target.value)
+      setBaseUrl(e.target.value)
     }
   
 
@@ -17,12 +17,12 @@ const BaseUrlBar: React.FC = () => {
       <div className='flex flex-row'>
         <input 
           type='text'
-          value={ baseURL }
+          value={ baseUrl }
           onChange={ handleBaseUrlChange }
           className='bg-gray-700 text-black px-2 py-1'
         />
         <button onClick={ () => setIsEditing(true) }>
-          
+
         </button>
         <button onClick={ () => setIsEditing(false) }>
 

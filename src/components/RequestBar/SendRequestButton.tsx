@@ -1,14 +1,12 @@
-import useRequest from "../../hooks/useRequest"
-import useRequestStore from "../../store/requestStore"
+import { useRequestsTreesStore } from "../../store/requestsTreesStore"
 
 const SendRequestButton: React.FC = () => {
 
-    const { method, baseURL, endpoint } = useRequestStore()
-    const { send } = useRequest()
+  const { sendRequest } = useRequestsTreesStore()
   
     return (
       <button
-        onClick={ () => send({ method, baseURL, endpoint }) }
+        onClick={ () => sendRequest() }
       >
         Send
       </button>

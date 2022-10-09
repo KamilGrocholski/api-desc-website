@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react"
-import useRequestStore from "../../store/requestStore"
+import { useRequestsTreesStore } from "../../store/requestsTreesStore"
 
 const RequestResultWindow: React.FC = () => {
 
-    const { requestResult } = useRequestStore()
+    const { requestResult } = useRequestsTreesStore()
   
     const [result, setResult] = useState<typeof requestResult>([])
     useEffect(() => {

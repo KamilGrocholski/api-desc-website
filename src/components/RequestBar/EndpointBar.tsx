@@ -1,19 +1,19 @@
-import useRequestStore from "../../store/requestStore"
+import { useRequestsTreesStore } from "../../store/requestsTreesStore"
 
 const EndpointBar: React.FC = () => {
   
-    const { endpoint, setEndpoint } = useRequestStore()
+    const { setCurrentSetup, currentSetup } = useRequestsTreesStore()
   
     const handleEndpointChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       e.preventDefault()
-      setEndpoint(e.target.value)
+      setCurrentSetup({ endpoint: e.target.value })
     }
 
     return (
       <div>
         <input 
           type='text'
-          value={ endpoint }
+          value={ currentSetup.endpoint }
           onChange={ handleEndpointChange }
           className='text-black bg-gray-400 px-2 py-1'
         />
