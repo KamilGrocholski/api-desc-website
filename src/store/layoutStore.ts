@@ -23,7 +23,7 @@ export const useLayoutStore = create(
             isTreeOpen: true,
             toggleIsTreeOpen: () => {
                 const isTreeOpen = get().isTreeOpen
-                set(() => ({ isTreeOpen: isTreeOpen }))
+                set(() => ({ isTreeOpen: !isTreeOpen }))
             },
         }),
         {

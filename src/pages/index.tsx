@@ -17,7 +17,7 @@ const Home: NextPage = () => {
       </Head>
 
 
-      <div className='flex flex-col mx-auto'>
+      <div className='flex flex-col mx-auto space-y-3'>
 
         <div className='sticky top-0 flex justify-center'>
             <RequestBar />

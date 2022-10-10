@@ -111,7 +111,10 @@ export const useRequestsTreesStore = create(
                 .then(data => {
                     set(() => ({ requestResult: data }))
                 })
-                .catch(err => console.log(err))
+                .catch(err => {
+                    console.log(err)
+                    set(() => ({ requestResult: undefined }))
+                })
             },
 
             // Requests trees
@@ -136,8 +139,30 @@ export const useRequestsTreesStore = create(
 
             removeRequestTree: (baseUrl) => {
                 const requestsTrees = get().requestsTrees
+                if (requestsTrees.length === 1 || 0) {
+                    set(() => ({
+                        requestsTrees: [
+                            {
+                                baseUrl: 'https://pokeapi.co/api/v2/',
+                                methods: {
+                                    GET: ['pokemon/ditto', 'pokemon-species/aegislash', 'type/3'],
+                                    POST: ['pokemon/ditto'],
+                                    PUT: ['pokemon/ditto'],
+                                    DELETE: ['pokemon/ditto']
+                                } 
+                            }
+                        ],
+                        currentSetup: {
+                            baseUrl: 'https://pokeapi.co/api/v2/',
+                            method: 'GET',
+                            endpoint: 'pokemon/ditto'
+                        }
+                    }))
+
+                    return 
+                }
                 set(() => ({
-                    requestsTrees: requestsTrees.filter(tree => tree.baseUrl !== baseUrl)
+                    requestsTrees: requestsTrees.filter(tree => tree.baseUrl !== baseUrl),
                 }))
             },
 

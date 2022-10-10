@@ -6,15 +6,12 @@ import RequestNotifications from "./RequestNotifications"
 
 const RequestBar: React.FC = () => {
     return (
-        <>
-            <div className='flex flex-row'>
-                <MethodBar />
-                <BaseUrlBar />
-                <EndpointBar />
-                <SendRequestButton />
-            </div>
-            {/* <RequestNotifications /> */}
-        </>
+        <div className='flex flex-row w-full'>
+            <MethodBar />
+            <BaseUrlBar />
+            <EndpointBar />
+            <SendRequestButton />
+        </div>
     )
 }
 

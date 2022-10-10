@@ -10,13 +10,13 @@ const EndpointBar: React.FC = () => {
     }
 
     return (
-      <div>
+      <div className='grow'>
         <input 
           type='text'
           value={ currentSetup.endpoint }
           onChange={ handleEndpointChange }
           onFocus={ e => e.target.select() }
-          className='text-black bg-gray-400 px-2 py-1'
+          className='text-black bg-gray-400 px-2 py-1 w-full'
           list='endpoints'
         />
         <datalist id='endpoints'>
