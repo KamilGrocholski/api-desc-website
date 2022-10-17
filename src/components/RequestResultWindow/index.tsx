@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { useRequestsTreesStore } from "../../store/requestsTreesStore"
+import CallState from "./CallState"
 
 const RequestResultWindow: React.FC = () => {
 
@@ -11,7 +12,8 @@ const RequestResultWindow: React.FC = () => {
     }, [requestResult])
 
     return (
-      <div className='w-[50vw] h-[90vh] overflow-scroll'>
+      <div className='w-[50vw] h-[90vh] overflow-scroll flex flex-col space-y-3'>
+        <CallState />
         <pre>{ JSON.stringify(result, null, 2) }</pre>
       </div>
     )

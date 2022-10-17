@@ -1,12 +1,17 @@
 import create from 'zustand'
 import { persist } from 'zustand/middleware'
 import { MethodValue } from '../constants/Methods'
+import { AxiosRequestConfig } from 'axios'
+import { call } from '../utils/axios'
+import { stringsCombine } from '../utils/stringsCombine'
 
 export type BaseUrl = string
 
 export type Endpoint = string 
 
 export type Method = MethodValue
+
+export type Headers = Record<string, string | number>
 
 export interface RequestTree {
     baseUrl: BaseUrl
@@ -17,8 +22,26 @@ export interface MadeRequest {
     baseUrl: BaseUrl
     method: Method
     endpoint: Endpoint 
+    request?: {
+        headers?: Headers
+        data?: AxiosRequestConfig['data']
+    }
+    response?: {
+        status?: number 
+        time?: number
+    }
     time: number
 }
+
+export interface CurrentCallState {
+    request?: 'error' | 'sent' | 'sending'
+    response?: {
+        status?: number
+        state?: 'error' | 'success' | 'awaiting'
+        time?: number
+    }
+}
+
 interface State {
 
     // Current setup
@@ -31,6 +54,9 @@ interface State {
     // Request result
     requestResult: unknown
 
+    // Current request
+    currentCallState: CurrentCallState | undefined
+
     // Made requests
     madeRequests: MadeRequest[]
 
@@ -42,9 +68,11 @@ interface Actions {
     // Current setup
     setCurrentSetup: (setup: Partial<State['currentSetup']>) => void
 
+    // Request state 
+
     // Made requests
     removeRequest: (time: MadeRequest['time']) => void
-    sendRequest: () => void
+    sendRequest: () => Promise<void>
 
     // Requests trees
     addRequestTree: (baseUrl: BaseUrl) => void
@@ -85,6 +113,8 @@ export const useRequestsTreesStore = create(
             // Request result
             requestResult: undefined,
 
+            currentCallState: undefined,
+
             // Made requests
             madeRequests: [],
 
@@ -93,27 +123,93 @@ export const useRequestsTreesStore = create(
                 set(() => ({ madeRequests: madeRequests.filter(request => request.time !== time) }))
             },
 
-            sendRequest: () => {
+            sendRequest: async () => {
                 const currentSetup = get().currentSetup
                 const madeRequests = get().madeRequests
-                const newRequest = {
-                    ...currentSetup,
-                    time: Date.now()
-                }
-                set(() => ({
-                    madeRequests: [newRequest, ...madeRequests]
-                }))
+                const currentCallState = get().currentCallState
 
-                fetch(currentSetup.baseUrl+currentSetup.endpoint, {
-                    method: currentSetup.method
-                })
-                .then(res => res.json())
-                .then(data => {
-                    set(() => ({ requestResult: data }))
-                })
-                .catch(err => {
-                    console.log(err)
-                    set(() => ({ requestResult: undefined }))
+                const start = Date.now()
+
+                await call({
+                    url: stringsCombine([currentSetup.baseUrl, currentSetup.endpoint]),
+                    method: currentSetup.method.toLowerCase() as Lowercase<Method>,
+                    onRequestSuccess: (config) => {
+                        set(() => ({ currentCallState: {
+                            request: 'sent',
+                            response: {
+                                state: 'awaiting'
+                            }
+                        } }))
+                        console.log({
+                            request: 'sent',
+                            response: {
+                                state: 'awaiting'
+                            }
+                        })
+                    },
+                    onRequestError: (error) => {
+                        set(() => ({ currentCallState: {
+                            request: 'error'
+                        } }))
+                    },
+                    onResponseSuccess: (response) => {
+                        const responseTime = Date.now() - start
+                        const newRequest: MadeRequest = {
+                            ...currentSetup,
+                            time: Date.now(),
+                            response: {
+                                status: response.status,
+                                time: responseTime
+                            }
+                        }
+                        set(() => ({
+                            requestResult: response.data,
+                            madeRequests: [newRequest, ...madeRequests],
+                            currentCallState: {
+                                ...currentCallState,
+                                response: {
+                                    state: 'success',
+                                    status: response.status,
+                                    time: responseTime
+                                }
+                            }
+                        }))
+                        console.log({
+                            request: 'sent',
+                            response: {
+                                state: 'awaiting'
+                            }
+                        })
+                    },
+                    onResponseError: (error) => {
+                        const responseTime = Date.now() - start
+                        const newRequest: MadeRequest = {
+                            ...currentSetup,
+                            time: Date.now(),
+                            response: {
+                                status: error.response?.status,
+                                time: responseTime
+                            }
+                        }
+                        set(() => ({
+                            requestResult: undefined,
+                            madeRequests: [newRequest, ...madeRequests],
+                            currentCallState: {
+                                ...currentCallState,
+                                response: {
+                                    state: 'error',
+                                    status: error.response?.status,
+                                    time: responseTime
+                                }
+                            }
+                        }))
+                        console.log({
+                            request: 'sent',
+                            response: {
+                                state: 'awaiting'
+                            }
+                        })
+                    },
                 })
             },
 
@@ -280,6 +376,8 @@ export const useRequestsTreesStore = create(
             },
 
         }),
+
+        // Zustand -- storage setup
         {
             name: 'RequestsTrees',
             getStorage: () => localStorage
