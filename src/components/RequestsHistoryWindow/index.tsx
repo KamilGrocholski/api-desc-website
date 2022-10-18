@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react"
 import { useLayoutStore } from "../../store/layoutStore"
 import { useRequestsTreesStore } from "../../store/requestsTreesStore"
 import ActionsNotifications from "./ActionsNotifications"
@@ -7,13 +6,8 @@ import Request from "./Request"
 
 const RequestsHistoryWindow: React.FC = () => {
 
-    const { madeRequests } = useRequestsTreesStore()
+    const madeRequests = useRequestsTreesStore(state => state.madeRequests)
     const { isHistoryOpen, toggleIsHistoryOpen } = useLayoutStore()
-
-    const [list, setList] = useState<typeof madeRequests>([])
-    useEffect(() => {
-      setList(madeRequests)
-    }, [madeRequests])
 
     return (
       // <div className='h-64 overflow-y-scroll overscroll-none'>
@@ -27,7 +21,7 @@ const RequestsHistoryWindow: React.FC = () => {
           </button>
         </Header>
         <div className='flex flex-col space-y-1 overscroll-y-none overflow-y-scroll h-[85vh] no-scrollbar'> 
-          {list.map((request, i) => (
+          {madeRequests.map((request, i) => (
             <Request 
               key={ i }
               request={ request }

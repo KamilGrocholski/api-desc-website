@@ -8,11 +8,12 @@ const EndpointBar: React.FC<{ method: Method, endpoint: Endpoint }> = ({ method,
  
     const [editEndpoint, setEditEndpoint] = useState<Endpoint | undefined>(undefined)
     
-    const { setCurrentSetup, currentSetup, removeEndpoint, updateEndpoint } = useRequestsTreesStore()
+    const { setCurrentSetup, removeEndpoint, updateEndpoint } = useRequestsTreesStore()
+    const currentBaseUrl = useRequestsTreesStore(state => state.currentSetup.baseUrl)
 
     const handleRemoveEndpoint = (e: React.MouseEvent<HTMLButtonElement>, method: Method, endpoint: Endpoint) => {
         e.stopPropagation()
-        removeEndpoint(currentSetup.baseUrl, method, endpoint)
+        removeEndpoint(currentBaseUrl, method, endpoint)
     }
 
     const handleSetEditingMode = (e: React.MouseEvent<HTMLButtonElement>, endpoint: Endpoint) => {
@@ -25,7 +26,7 @@ const EndpointBar: React.FC<{ method: Method, endpoint: Endpoint }> = ({ method,
         e.stopPropagation()
         if (!editEndpoint) return 
 
-        updateEndpoint(currentSetup.baseUrl, method, oldEndpoint, editEndpoint)
+        updateEndpoint(currentBaseUrl, method, oldEndpoint, editEndpoint)
         setMode('none')
     }
 

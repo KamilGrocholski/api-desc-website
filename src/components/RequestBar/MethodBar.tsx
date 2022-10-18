@@ -3,7 +3,8 @@ import { useRequestsTreesStore } from "../../store/requestsTreesStore"
 
 const MethodBar: React.FC = () => {
 
-    const { setCurrentSetup, currentSetup } = useRequestsTreesStore()
+    const { setCurrentSetup } = useRequestsTreesStore()
+    const currentMethod = useRequestsTreesStore(state => state.currentSetup.method)
   
     const handleMethodChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
       e.preventDefault()
@@ -13,9 +14,9 @@ const MethodBar: React.FC = () => {
     return (
       <div>
         <select
-          value={ currentSetup.method }
+          value={ currentMethod }
           onChange={ handleMethodChange }
-          className={ `${ currentSetup.method } rounded-l-md px-2 py-1 text-black font-bold text-xs h-full` }
+          className={ `${ currentMethod } rounded-l-md px-2 py-1 text-black font-bold text-xs h-full` }
         >
           {Object.values(METHODS).map((method, i) => (
             <option

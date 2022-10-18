@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { BaseUrl, useRequestsTreesStore } from '../../store/requestsTreesStore'
 import * as Icons from '../../assets/icons'
+import shallow from 'zustand/shallow'
 
 const BaseUrl = () => {
 
@@ -9,18 +10,15 @@ const BaseUrl = () => {
     const [newBaseUrl, setNewBaseUrl] = useState<BaseUrl | undefined>(undefined)
     const [editBaseUrl, setEditBaseUrl] = useState<BaseUrl | undefined>(undefined) 
 
-    const { setCurrentSetup, getAllBaseUrls, currentSetup, addRequestTree, updateBaseUrl, removeRequestTree } = useRequestsTreesStore() 
-    const currentBaseUrl = useRequestsTreesStore(state => state.currentSetup.baseUrl)
-    const [selectedBaseUrl, setSelectedBaseUrl] = useState<BaseUrl | undefined>(currentSetup.baseUrl) 
+    const { setCurrentSetup, getAllBaseUrls, addRequestTree, updateBaseUrl, removeRequestTree } = useRequestsTreesStore() 
+    const currentBaseUrl = useRequestsTreesStore(state => state.currentSetup.baseUrl, shallow)
+    const [selectedBaseUrl, setSelectedBaseUrl] = useState<BaseUrl | undefined>(currentBaseUrl) 
 
-    useEffect(() => {
-        setCurrentSetup({ baseUrl: selectedBaseUrl })
-    }, [selectedBaseUrl, setCurrentSetup])
 
     const handleSetEditMode = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation()
-        setEditBaseUrl(currentSetup.baseUrl)
-        setMode('editing')
+        setEditBaseUrl(currentBaseUrl)
+        setMode('editing')  
     }
 
     const handleSetAddMode = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -46,7 +44,7 @@ const BaseUrl = () => {
     const handleSaveBaseUrlEdit = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation()
         if (!editBaseUrl) return 
-        updateBaseUrl(currentSetup.baseUrl, editBaseUrl)
+        updateBaseUrl(currentBaseUrl, editBaseUrl)
         setSelectedBaseUrl(editBaseUrl)
         setMode('none')
     }

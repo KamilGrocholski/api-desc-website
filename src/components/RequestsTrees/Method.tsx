@@ -9,13 +9,14 @@ const Method: React.FC<{ method: Method, endpoints: Endpoint[] }> = ({ method, e
     const [mode, setMode] = useState<'adding' | 'none'>('none')
  
     const [newEndpoint, setNewEndpoint] = useState<Endpoint | undefined>(undefined)
-    const { addEndpoint, currentSetup } = useRequestsTreesStore()
+    const { addEndpoint } = useRequestsTreesStore()
+    const currentBaseUrl = useRequestsTreesStore(state => state.currentSetup.baseUrl)
     const [height, setHeight] = useState<'auto' | number | `${number}%`>('auto')
 
     const handleAddNewEndpoint = (method: Method) => {
         if (!newEndpoint) return 
         
-        addEndpoint(currentSetup.baseUrl, method, newEndpoint)
+        addEndpoint(currentBaseUrl, method, newEndpoint)
         setMode('none')
     }
 
