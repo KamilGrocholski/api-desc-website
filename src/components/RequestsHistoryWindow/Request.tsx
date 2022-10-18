@@ -47,9 +47,14 @@ const Request: React.FC<{ request: MadeRequest }> = ({ request }) => {
                   </Link>
                 </div>
 
-                <div className='flex flex-row justify-between w-full'>
+                <div className='flex flex-row justify-between w-full items-center'>
                   <div className='text-white/40 text-sm'>
                     { secondsToLocalString(request.time) }
+                  </div>
+                  <div>
+                    <div className={ `text-xs ${ request.response?.status && request.response.status <= 299 ? 'text-green-500' : 'text-red-500' }` }>
+                      { request.response?.status ?? 'No status' }
+                    </div>
                   </div>
                   <div className='flex flex-row space-x-3'>
                     <button

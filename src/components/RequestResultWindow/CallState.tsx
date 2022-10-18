@@ -1,7 +1,7 @@
 import { useRequestsTreesStore } from "../../store/requestsTreesStore"
 
 const CallState: React.FC = () => {
-    const { currentCallState } = useRequestsTreesStore()
+    const currentCallState = useRequestsTreesStore(state => state.currentCallState)
 
     const lv = 'flex flex-row space-x-3'
 

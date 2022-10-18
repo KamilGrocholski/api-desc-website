@@ -1,13 +1,12 @@
 import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
 import { Method } from '../store/requestsTreesStore'
-
 interface CallConfig {
     onRequestSuccess: (config: AxiosRequestConfig) => void
     onRequestError: (error: any) => void
     onResponseSuccess: (response: AxiosResponse) => void
     onResponseError: (error: AxiosError) => void
     method: Lowercase<Method>
-    headers?: Headers
+    headers?: Record<string, string | number>
     data?: AxiosRequestConfig['data'] 
     url: string
 }
@@ -44,17 +43,18 @@ const handleRequestSuccess = (config: AxiosRequestConfig, callback: (CallConfig[
 const handleRequestError = (error: AxiosRequestConfig, callback: (CallConfig['onRequestError'])) => {
     callback(error)
 
-    return error
+    return Promise.reject(error)
 }
 
 const handleResponseSuccess = (response: AxiosResponse, callback: CallConfig['onResponseSuccess']): AxiosResponse<any, any> | Promise<AxiosResponse<any, any>> => {
     callback(response)
-
+    console.log(response)
     return Promise.resolve(response)
 }
 
 const handleResponseError = (error: AxiosError, callback: CallConfig['onResponseError']) => {
     callback(error)
+    console.log(error)
 
-    return error 
+    return Promise.reject(error) 
 }

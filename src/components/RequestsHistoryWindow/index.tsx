@@ -17,7 +17,7 @@ const RequestsHistoryWindow: React.FC = () => {
 
     return (
       // <div className='h-64 overflow-y-scroll overscroll-none'>
-      <div className={ `${ isHistoryOpen ? 'translate-x-0' : '-translate-x-[83%]' } p-3 flex flex-col space-y-1 transition-all ease-in-out duration-1000` }>
+      <div className={ `${ isHistoryOpen ? 'translate-x-0' : '-translate-x-[83%]' } p-3 flex flex-col space-y-1 transition-all ease-in-out duration-1000 w-[440px]` }>
         {/* <ActionsNotifications /> */}
         <Header> 
           <button 
@@ -29,8 +29,8 @@ const RequestsHistoryWindow: React.FC = () => {
         <div className='flex flex-col space-y-1 overscroll-y-none overflow-y-scroll h-[85vh] no-scrollbar'> 
           {list.map((request, i) => (
             <Request 
-            key={ i }
-            request={ request }
+              key={ i }
+              request={ request }
             />
           ))}
         </div>

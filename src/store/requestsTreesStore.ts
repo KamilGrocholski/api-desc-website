@@ -49,6 +49,8 @@ interface State {
         baseUrl: BaseUrl
         method: Method
         endpoint: Endpoint
+        headers?: Headers
+        data?: AxiosRequestConfig['data']
     } 
 
     // Request result
@@ -98,7 +100,9 @@ export const useRequestsTreesStore = create(
             currentSetup: {
                 baseUrl: 'https://pokeapi.co/api/v2/',
                 method: 'GET',
-                endpoint: 'pokemon/ditto'
+                endpoint: 'pokemon/ditto',
+                data: undefined,
+                headers: undefined 
             },     
 
             setCurrentSetup: (setup) => {
@@ -126,29 +130,32 @@ export const useRequestsTreesStore = create(
             sendRequest: async () => {
                 const currentSetup = get().currentSetup
                 const madeRequests = get().madeRequests
-                const currentCallState = get().currentCallState
 
                 const start = Date.now()
+
+                set(() => ({
+                    currentCallState: {
+                        request: 'sending'
+                    }
+                }))
 
                 await call({
                     url: stringsCombine([currentSetup.baseUrl, currentSetup.endpoint]),
                     method: currentSetup.method.toLowerCase() as Lowercase<Method>,
+                    data: currentSetup.data,
+                    headers: currentSetup.headers,
                     onRequestSuccess: (config) => {
-                        set(() => ({ currentCallState: {
+                        set(state => ({ currentCallState: {
+                            ...state.currentCallState,
                             request: 'sent',
                             response: {
                                 state: 'awaiting'
                             }
                         } }))
-                        console.log({
-                            request: 'sent',
-                            response: {
-                                state: 'awaiting'
-                            }
-                        })
                     },
                     onRequestError: (error) => {
-                        set(() => ({ currentCallState: {
+                        set(state => ({ currentCallState: {
+                            ...state.currentCallState,
                             request: 'error'
                         } }))
                     },
@@ -162,11 +169,11 @@ export const useRequestsTreesStore = create(
                                 time: responseTime
                             }
                         }
-                        set(() => ({
+                        set(state => ({
                             requestResult: response.data,
                             madeRequests: [newRequest, ...madeRequests],
                             currentCallState: {
-                                ...currentCallState,
+                                ...state.currentCallState,
                                 response: {
                                     state: 'success',
                                     status: response.status,
@@ -174,12 +181,6 @@ export const useRequestsTreesStore = create(
                                 }
                             }
                         }))
-                        console.log({
-                            request: 'sent',
-                            response: {
-                                state: 'awaiting'
-                            }
-                        })
                     },
                     onResponseError: (error) => {
                         const responseTime = Date.now() - start
@@ -191,11 +192,11 @@ export const useRequestsTreesStore = create(
                                 time: responseTime
                             }
                         }
-                        set(() => ({
+                        set(state => ({
                             requestResult: undefined,
                             madeRequests: [newRequest, ...madeRequests],
                             currentCallState: {
-                                ...currentCallState,
+                                ...state.currentCallState,
                                 response: {
                                     state: 'error',
                                     status: error.response?.status,
@@ -203,12 +204,6 @@ export const useRequestsTreesStore = create(
                                 }
                             }
                         }))
-                        console.log({
-                            request: 'sent',
-                            response: {
-                                state: 'awaiting'
-                            }
-                        })
                     },
                 })
             },
